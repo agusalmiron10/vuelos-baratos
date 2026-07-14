@@ -1,0 +1,27 @@
+name: Alerta de vuelos baratos
+
+on:
+  schedule:
+    # Corre todos los días a las 12:00 UTC (09:00 en Argentina)
+    - cron: "0 12 * * *"
+  workflow_dispatch: {}  # permite ejecutarlo a mano desde GitHub para probar
+
+jobs:
+  buscar-vuelos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: pip install requests
+
+      - name: Buscar vuelos y enviar alertas
+        env:
+          TRAVELPAYOUTS_TOKEN: ${{ secrets.TRAVELPAYOUTS_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python flight_alert.py
