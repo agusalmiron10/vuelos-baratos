@@ -143,4 +143,7 @@ def main():
 
     lineas = [f"✈️ <b>¡Vuelos baratos a Europa desde {ORIGEN}!</b>\n"]
     for o in ofertas_baratas:
-        escalas = "directo" if o["escalas"] == 0 else
+        if o["escalas"] == 0:
+            escalas = "directo"
+        else:
+            escalas = str(o["escalas"]) + " escala(s)"
