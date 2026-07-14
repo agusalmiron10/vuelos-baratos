@@ -143,7 +143,24 @@ def main():
 
     lineas = [f"✈️ <b>¡Vuelos baratos a Europa desde {ORIGEN}!</b>\n"]
     for o in ofertas_baratas:
-        if o["escalas"] == 0:
-            escalas = "directo"
-        else:
-            escalas = str(o["escalas"]) + " escala(s)"
+        escalas = "directo" if o["escalas"] == 0 else f"{o['escalas']} escala(s)"
+        url = f"https://www.aviasales.com{o['link']}" if o["link"] else ""
+        linea = (
+            f"🔥 <b>{o['destino']}</b> — <b>USD {o['precio']:.0f}</b>\n"
+            f"   📅 {o['fecha_ida']} → {o['fecha_vuelta']} · {escalas} · {o['aerolinea']}"
+        )
+        if url:
+            linea += f'\n   👉 <a href="{url}">Ver en Aviasales</a>'
+        lineas.append(linea + "\n")
+
+    lineas.append(
+        f"💡 Precios ida y vuelta por adulto, menores a USD {PRECIO_MAXIMO_USD}. "
+        f"Verificá el precio final antes de comprar."
+    )
+
+    enviar_telegram("\n".join(lineas))
+    print(f"📨 Alerta enviada con {len(ofertas_baratas)} oferta(s).")
+
+
+if __name__ == "__main__":
+    main()
