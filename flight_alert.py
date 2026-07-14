@@ -33,7 +33,8 @@ DESTINOS = {
     "AMS": "Ámsterdam",
 }
 
-PRECIO_MAXIMO_USD = 900   # alerta si el total ida y vuelta es menor a esto
+PRECIO_MINIMO_USD = 950   # alerta si el total ida y vuelta es mayor o igual a esto
+PRECIO_MAXIMO_USD = 1270  # alerta si el total ida y vuelta es menor o igual a esto
 MONEDA = "usd"
 
 MESES_A_BUSCAR = 3        # buscar en los próximos N meses
@@ -129,14 +130,17 @@ def main():
                     }
         if mejor:
             print(f"   Mejor precio: {MONEDA.upper()} {mejor['precio']:.0f}")
-            if mejor["precio"] <= PRECIO_MAXIMO_USD:
+            if PRECIO_MINIMO_USD <= mejor["precio"] <= PRECIO_MAXIMO_USD:
                 mejor["destino"] = f"{nombre} ({codigo})"
                 ofertas_baratas.append(mejor)
         else:
             print("   Sin resultados en caché para este destino.")
 
     if not ofertas_baratas:
-        print(f"✅ Sin ofertas por debajo de {MONEDA.upper()} {PRECIO_MAXIMO_USD} hoy.")
+        print(
+            f"✅ Sin ofertas entre {MONEDA.upper()} {PRECIO_MINIMO_USD} y "
+            f"{MONEDA.upper()} {PRECIO_MAXIMO_USD} hoy."
+        )
         return
 
     ofertas_baratas.sort(key=lambda o: o["precio"])
@@ -154,8 +158,8 @@ def main():
         lineas.append(linea + "\n")
 
     lineas.append(
-        f"💡 Precios ida y vuelta por adulto, menores a USD {PRECIO_MAXIMO_USD}. "
-        f"Verificá el precio final antes de comprar."
+        f"💡 Precios ida y vuelta por adulto, entre USD {PRECIO_MINIMO_USD} y "
+        f"USD {PRECIO_MAXIMO_USD}. Verificá el precio final antes de comprar."
     )
 
     enviar_telegram("\n".join(lineas))
